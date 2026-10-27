@@ -1,0 +1,12 @@
+article,level,variant,canonical,note
+16.2,dept,محاسبة الموازنة العادية,محاسبة الموازنة العادية (الجارية),Same دائرة; one card omits «(الجارية)».
+16.4,dept,الادارية,الشؤون الادارية,Short form.
+21,dept,النفقات الادارية,محاسبة النفقات الادارية,Short form.
+21,dept,الخزينة,الخزينة والإيرادات,Short form.
+21,dept,الخزينة والإرادات,الخزينة والإيرادات,Typo: «الإرادات» for «الإيرادات».
+21,sec,المشاريع الاستملاكية,المشاريع الاستملاكية والاستثمارية,Short form; the supervisor field names the long one.
+22,dept,العاملين,شؤون العاملين,Short form. «العاملين الفنيين» is a different دائرة and stays separate.
+22,sec,المحفوظات,المحفوظات العامة,Short form.
+28,dept,الإدارية,الشؤون الإدارية,Short form.
+31,dept,رئيس دائرة القطاعات والحراسة,القطاعات والحراسة,The title was typed into the unit field.
+43,dept,السير والدراسات الطرقية,لجنة السير والدراسات الطرقية,Short form.

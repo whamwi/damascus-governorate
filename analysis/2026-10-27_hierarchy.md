@@ -36,7 +36,7 @@ is created. That is a gap in the card set, not a guess about people.
 | — directly from the card's own fields | 767 |
 | — approximate or inferred from the structure (flagged) | 52 |
 | Not linked | 29 |
-| Placeholder heads (unit referenced, no head card) | 29 |
+| Placeholder heads (unit referenced, no head card) | 21 |
 
 No cycles. At most five levels below the Governor. 34 positions report directly
 to the Governor: the directorate heads, أمين السر and سكرتير المحافظ.
@@ -58,6 +58,16 @@ to the Governor: the directorate heads, أمين السر and سكرتير ال�
 - 5 name as supervisor the unit they head themselves. Example: «رئيس غرفة
   العمليات» reports to «رئيس الفرع» without saying which فرع.
 
+## Spelling variants
+
+The same unit is often spelt several ways: «الخزينة», «الخزينة والإيرادات»,
+«الخزينة والإرادات». Eleven clear cases are merged through
+`analysis/unit_aliases.csv`, a file reviewed by hand. The card text itself is
+never changed. Merging them cut the placeholder heads from 29 to 21, because
+the merged units then found their head cards. Similar names that may well be
+different units (القضاء العادي / الإداري, الحسابات / الصندوق, المراقبة /
+مراقبة الدوام) are left separate until DG confirms.
+
 ## Two directorates are not built like the others
 
 The usual order is المدير → دائرة → شعبة. The cards show two exceptions:
@@ -69,7 +79,7 @@ The usual order is المدير → دائرة → شعبة. The cards show two 
 
 ## Findings from the tree
 
-- **29 units have no head card**. Examples: دائرة الشؤون الإدارية in الشؤون
+- **21 units have no head card**. Examples: دائرة الشؤون الإدارية in الشؤون
   الصحية (6 positions under it), دائرة محاسبة المشاريع and دائرة الرواتب
   والأجور in الشؤون المالية, شعبة الخدمات in دار الكرامة (4 positions), and
   شعبة الإدارية in دوائر الخدمات (3). The full list is in the tree, in red.

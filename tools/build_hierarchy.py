@@ -29,6 +29,13 @@ def key(s):
 
 
 # ---- 1. cards with their unit path -------------------------------------------
+# Spelling variants of the same unit, reviewed by hand (analysis/unit_aliases.csv).
+# They change the unit a card is grouped under, never the card's own text.
+ALIAS = {(r['article'], r['level'], key(r['variant'])): r['canonical']
+         for r in csv.DictReader(open(map_csv.with_name('unit_aliases.csv'), encoding='utf-8'))}
+def canon(art, level, raw):
+    return ALIAS.get((art, level, key(raw)), raw) if raw else raw
+
 P = []
 for f in sorted(docx_root.rglob('*.docx')):
     st = unicodedata.normalize('NFKC', f.stem)
@@ -38,10 +45,10 @@ for f in sorted(docx_root.rglob('*.docx')):
         if c['dept'] and re.match(r'(ال)?(قسم|فرع)\b', c['dept']) and not c['sub']:
             c['sub'], c['dept'] = c['dept'], None      # «قسم الشؤون الفنية» written as a دائرة
         P.append({'id': f'{art}/{f.stem[:12]}/{i}', 'art': art, **c,
-                  'lv': {k: key(c[k]) for k in ('dept', 'sec', 'sub')}})
+                  'lv': {k: key(canon(art, k, c[k])) for k in ('dept', 'sec', 'sub')}})
 
 # readable unit names, so a placeholder can say which unit it heads
-disp = {}
+disp = {(a, key(v)): v for (a, lvl, _), v in ALIAS.items()}
 for p in P:
     for k in ('dept', 'sec', 'sub'):
         if p[k]: disp.setdefault((p['art'], p['lv'][k]), p[k])
@@ -205,3 +212,15 @@ stats = {'cards': len(P), 'linked': cards_linked, 'placeholders': len(virtual),
 out.write_text(page.replace('/*DATA*/', json.dumps({'nodes': nodes, 'stats': stats}, ensure_ascii=False)),
                encoding='utf-8')
 print('->', out)
+
+# ---- 6. everything the database loader needs ------------------------------------
+dump = {'cards': [{k: p.get(k) for k in ('id', 'art', 'file', 'n', 'dir', 'dept', 'sec', 'sub', 'boss', 'title',
+                                         'cls', 'qual', 'spec', 'exp', 'train', 'other', 'effort', 'tasks',
+                                         'heads', 'parent', 'how')} | {'unit': list(p.get('unit') or ()),
+                                                                      'lv': p['lv']} for p in P],
+        'placeholders': [v | {'unit': list(v['unit'])} for v in virtual.values()],
+        'order': {a: list(o) for a, o in ORDER.items()},
+        'display': [[a, k, v] for (a, k), v in disp.items()]}
+jout = pathlib.Path(dst).with_suffix('.json')
+jout.write_text(json.dumps(dump, ensure_ascii=False, indent=1), encoding='utf-8')
+print('->', jout)
