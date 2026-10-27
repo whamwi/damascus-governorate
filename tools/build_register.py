@@ -12,19 +12,11 @@ import csv, re, sys, pathlib, collections, unicodedata
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from parse_cards import cards
+from parse_cards import cards, card_key
 
 docx_root, staff_xlsx, map_csv, dst = map(pathlib.Path, sys.argv[1:5])
 
 
-def card_key(f):
-    """Article key of a card file: '16 .../3 بطاقات' -> 16.3, '20-1 بطاقات' -> 20."""
-    nf = lambda x: unicodedata.normalize('NFKC', x)  # some names arrive in presentation forms
-    stem, parent = nf(f.stem), nf(f.parent.name)
-    if 'أمين السر' in stem: return '16.0'
-    if stem.startswith('2020'): return '2020'
-    n = re.match(r'(\d+)', stem).group(1)
-    return f'16.{n}' if parent.startswith('16 ') else n
 
 
 def level(s):

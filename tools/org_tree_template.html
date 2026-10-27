@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>هيكل محافظة دمشق من بطاقات الوصف</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --ink: #1d232a; --muted: #5d6670; --line: #d9dde1;
+    --head: #1f4e79; --head-bg: #eaf1f8; --warn: #9a5b00; --warn-bg: #fff4e0;
+    --gap: #8a1c1c; --gap-bg: #fbeaea; --chip: #f0f1f3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15181c; --panel: #1d2126; --ink: #e6e8eb; --muted: #9aa3ad; --line: #343a42;
+      --head: #9cc3ea; --head-bg: #1f2d3b; --warn: #f0b45a; --warn-bg: #3a2c14;
+      --gap: #f19a9a; --gap-bg: #3a1c1c; --chip: #2a2f36;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.55 "Segoe UI", Tahoma, "Noto Naskh Arabic", sans-serif; }
+  header { padding: 20px 16px 8px; max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 21px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13.5px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; }
+  .stat b { font-size: 17px; margin-inline-end: 4px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0 4px; }
+  input[type=search] { flex: 1 1 220px; min-width: 0; padding: 7px 10px; border: 1px solid var(--line);
+                       border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; }
+  button { padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel);
+           color: var(--ink); font: inherit; cursor: pointer; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .legend span::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 3px;
+                         margin-inline-end: 5px; vertical-align: -1px; }
+  .lg-head::before { background: var(--head-bg); border: 1px solid var(--head); }
+  .lg-gap::before { background: var(--gap-bg); border: 1px dashed var(--gap); }
+  .lg-warn::before { background: var(--warn-bg); border: 1px solid var(--warn); }
+  main { max-width: 1100px; margin: 0 auto; padding: 4px 16px 40px; }
+  ul.tree { list-style: none; margin: 0; padding-inline-start: 18px; border-inline-start: 1px solid var(--line); }
+  main > ul.tree { padding-inline-start: 0; border: 0; }
+  li { margin: 5px 0; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  .node { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 4px 10px;
+          border-radius: 7px; background: var(--head-bg); border: 1px solid transparent; max-width: 100%; }
+  .node .t { font-weight: 600; color: var(--head); }
+  .node .u { color: var(--muted); font-size: 13px; }
+  .node .n { font-size: 12px; color: var(--muted); }
+  details > summary .node::before { content: "◂"; color: var(--muted); font-size: 12px; }
+  details[open] > summary .node::before { content: "▾"; }
+  .placeholder .node { background: var(--gap-bg); border: 1px dashed var(--gap); }
+  .placeholder .node .t { color: var(--gap); }
+  .approx > .node, .approx > summary > .node { border-color: var(--warn); }
+  .flag { font-size: 11.5px; color: var(--warn); background: var(--warn-bg); border-radius: 4px; padding: 0 5px; }
+  .staff { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 2px; padding-inline-start: 18px; }
+  .chip { background: var(--chip); border-radius: 5px; padding: 1px 7px; font-size: 12.5px; }
+  .chip.approx { outline: 1px solid var(--warn); }
+  .hit > summary .node, .hit > .node, .chip.hit { box-shadow: 0 0 0 2px #e0a800; }
+  .orphan .node { background: var(--gap-bg); }
+</style>
+</head>
+<body>
+<header>
+  <h1>هيكل محافظة دمشق كما تُظهره بطاقات الوصف الوظيفي</h1>
+  <div class="sub">مبني آلياً من حقلَي «موقع الوظيفة في التنظيم» و«اسم عمل الرئيس المباشر» في كل بطاقة. ليس هيكلاً معتمداً.</div>
+  <div class="stats" id="stats"></div>
+  <div class="bar">
+    <input type="search" id="q" placeholder="ابحث عن مسمى أو وحدة…">
+    <button id="open">فتح الكل</button><button id="close">طي الكل</button>
+  </div>
+  <div class="legend">
+    <span class="lg-head">رئيس وحدة له بطاقة</span>
+    <span class="lg-gap">رئيس وحدة بلا بطاقة (مُستنتَج)</span>
+    <span class="lg-warn">ربط تقريبي أو مُستنتَج من الهيكل</span>
+  </div>
+</header>
+<main><ul class="tree" id="root"></ul></main>
+<script>
+const DATA = /*DATA*/;
+const S = DATA.stats;
+document.getElementById('stats').innerHTML = [
+  [S.cards, 'بطاقة'], [S.linked, 'مرتبطة برئيسها'], [S.placeholders, 'رئيس وحدة بلا بطاقة'],
+  [S.approx, 'ربط تقريبي'], [S.orphans, 'بلا رئيس محدد']
+].map(([v, l]) => `<div class="stat"><b>${v}</b>${l}</div>`).join('');
+
+const kids = {};
+for (const n of DATA.nodes) (kids[n.p] = kids[n.p] || []).push(n);
+const esc = s => String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isHead = n => n.h && n.h !== '' && n.h !== 'deputy' || (kids[n.id] || []).length > 0;
+
+function count(n) { return (kids[n.id] || []).reduce((a, k) => a + 1 + count(k), 0); }
+
+function render(n, depth) {
+  const ch = kids[n.id] || [];
+  const heads = ch.filter(isHead), staff = ch.filter(k => !isHead(k));
+  const li = document.createElement('li');
+  if (n.h === 'placeholder') li.className = 'placeholder';
+  if (n.h === 'orphan') li.className = 'orphan';
+  const flag = n.f === 'approx' ? `<span class="flag" title="${esc(n.w)}">تقريبي</span>` : '';
+  const total = count(n);
+  const node = `<span class="node"><span class="t">${esc(n.t)}</span>` +
+               (n.u ? `<span class="u">${esc(n.u)}</span>` : '') + flag +
+               (total ? `<span class="n">${total} وظيفة</span>` : '') + `</span>`;
+  const staffHtml = staff.length ? `<div class="staff">${staff.map(k =>
+      `<span class="chip${k.f === 'approx' ? ' approx' : ''}" title="${esc((k.u ? k.u + ' — ' : '') + 'الرئيس كما ورد: ' + (k.b || '—'))}">${esc(k.t)}</span>`).join('')}</div>` : '';
+  if (!heads.length && !staff.length) { li.innerHTML = node; if (n.f === 'approx') li.classList.add('approx'); return li; }
+  const d = document.createElement('details');
+  if (n.f === 'approx') d.classList.add('approx');
+  d.open = depth < 1;
+  d.innerHTML = `<summary>${node}</summary>${staffHtml}`;
+  if (heads.length) {
+    const ul = document.createElement('ul'); ul.className = 'tree';
+    heads.forEach(k => ul.appendChild(render(k, depth + 1)));
+    d.appendChild(ul);
+  }
+  li.appendChild(d);
+  return li;
+}
+const root = document.getElementById('root');
+for (const n of kids[null] || []) root.appendChild(render(n, 0));
+
+const all = () => document.querySelectorAll('details');
+document.getElementById('open').onclick = () => all().forEach(d => d.open = true);
+document.getElementById('close').onclick = () => all().forEach((d, i) => d.open = false);
+document.getElementById('q').addEventListener('input', e => {
+  const q = e.target.value.trim();
+  document.querySelectorAll('.hit').forEach(x => x.classList.remove('hit'));
+  if (q.length < 2) return;
+  document.querySelectorAll('.node, .chip').forEach(el => {
+    if (!el.textContent.includes(q)) return;
+    const host = el.classList.contains('chip') ? el : el.closest('details') || el.parentElement;
+    host.classList.add('hit');
+    for (let p = el.parentElement; p; p = p.parentElement) if (p.tagName === 'DETAILS') p.open = true;
+  });
+});
+</script>
+</body>
+</html>

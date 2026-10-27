@@ -1,11 +1,11 @@
 """Parse job description cards (بطاقات وصف) from .docx: one table per card,
 header row labels the columns in any order; tasks follow as paragraphs."""
-import re, sys, json, pathlib, collections, docx
+import re, sys, json, pathlib, collections, unicodedata, docx
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 
 def norm(s): return re.sub(r'\s+', ' ', (s or '').replace('ـ', '')).strip()
-COLS = {'loc': 'موقع', 'title': 'مسمى', 'cls': 'تصنيف', 'req': 'الشروط'}
+COLS = {'loc': 'موقع|الجهة', 'title': 'مسمى', 'cls': 'تصنيف', 'req': 'الشروط'}
 REQ = {'qual': 'المؤهل', 'spec': 'الاختصاص', 'exp': 'الخبر', 'train': 'التدريب',
        'other': 'معارف', 'effort': 'نوع الجهد'}
 
@@ -20,26 +20,59 @@ def kv(text, key):
     v = norm(m.group(1)) if m else None
     return None if not v or v.endswith(':') else v
 
+LEVEL = [('dir', r'المديرية'), ('dept', r'(ال)?دائرة'), ('sec', r'(ال)?شعبة'),
+         ('sub', r'(ال)?(قسم|مكتب|فرع)')]
+
+def location(raw):
+    """The location cell, line by line: المديرية / الدائرة / الشعبة, sometimes a
+    قسم, مكتب or فرع, then the supervisor's title under its own label. An
+    unlabelled line before the supervisor is a unit name (e.g. «المكتب الخاص»)."""
+    out = {'dir': None, 'dept': None, 'sec': None, 'sub': None, 'boss': None}
+    lines = [norm(l) for l in raw.splitlines() if norm(l)]
+    for i, l in enumerate(lines):
+        if 'الرئيس المباشر' in l:
+            v = norm(l.split(':', 1)[1]) if ':' in l else ''
+            out['boss'] = v or ' '.join(lines[i + 1:]) or None
+            break
+        head, _, val = l.partition(':')
+        key = next((k for k, w in LEVEL if _ and re.fullmatch(w, norm(head))), None)
+        if key:
+            v = norm(val)
+            if v and not v.endswith(':'): out[key] = v
+        elif not _:
+            # unlabelled: «دائرة معالجة الأنقاض», «شعبة التقييم», «المكتب الخاص»;
+            # the governorate and sector lines above them are not units
+            m = re.match(r'(مديرية|دائرة|شعبة)\s+(.*)', l)
+            if m: out[{'مديرية': 'dir', 'دائرة': 'dept', 'شعبة': 'sec'}[m.group(1)]] = m.group(2)
+            elif not re.match(r'محافظة|القطاع', l): out['sub'] = l
+    return out
+
+def parse_new_template(t):
+    """The later template (2020): المسمى الوظيفي / الفئة الوظيفية / عدد مراكز العمل,
+    with «مسمى وظيفة رئيسه المباشر» as its own field."""
+    cells = uniq([c for r in t.rows for c in r.cells])
+    txt = '\n'.join(c.text for c in cells)
+    c = {'title': kv(txt, 'المسمى الوظيفي'), 'cls': kv(txt, 'الفئة الوظيفية'),
+         'dir': kv(txt, 'المديرية'), 'dept': kv(txt, r'الدائرة'), 'sec': kv(txt, r'الشعبة'),
+         'sub': None, 'boss': kv(txt, 'رئيسه المباشر')}
+    for k, w in REQ.items(): c[k] = kv(txt, w)
+    c['exp'] = c['exp'] or kv(txt, 'سنوات الخبرة')
+    return c
+
 def parse_table(t):
     rows = t.rows
+    if norm(rows[0].cells[0].text).startswith('المسمى الوظيفي'): return parse_new_template(t)
     hdr = [norm(c.text) for c in rows[0].cells]
     col = {}
     for k, w in COLS.items():
         for i, h in enumerate(hdr):
-            if w in h: col[k] = i; break
+            if re.search(w, h): col[k] = i; break
     if len(col) < 3: return None
     body = rows[1:]
     g = lambda k: norm(body[0].cells[col[k]].text) if k in col and body else ''
     raw_loc = body[0].cells[col['loc']].text if 'loc' in col else ''
     raw_title = body[0].cells[col['title']].text if 'title' in col else ''
-    c = {'dir': kv(raw_loc, 'المديرية'), 'dept': kv(raw_loc, 'الدائرة'),
-         'sec': kv(raw_loc, 'الشعبة'), 'boss': kv(raw_loc, 'الرئيس المباشر'),
-         'title': norm(raw_title), 'cls': g('cls')}
-    # supervisor sometimes sits on its own line after the label
-    if not c['boss']:
-        lines = [norm(l) for l in raw_loc.splitlines() if norm(l)]
-        for i, l in enumerate(lines):
-            if 'الرئيس المباشر' in l and i + 1 < len(lines): c['boss'] = lines[i + 1]
+    c = {'title': norm(raw_title), 'cls': g('cls'), **location(raw_loc)}
     req = ' \n'.join(norm(r.cells[col['req']].text) for r in body) if 'req' in col else ''
     for k, w in REQ.items(): c[k] = kv(req, w)
     return c
@@ -57,6 +90,16 @@ def cards(path):
             if not txt or re.match(r'(ال)?مهام', txt) or re.search(r'بطاقة\s*(ال)?وصف', txt): continue
             cur['tasks'].append(re.sub(r'^[-–•\d\.\)\(]+\s*', '', txt))
     return out
+
+def card_key(f):
+    """Article key of a card file: '16 .../3 بطاقات' -> 16.3, '20-1 بطاقات' -> 20."""
+    nf = lambda x: unicodedata.normalize('NFKC', x)  # some names arrive in presentation forms
+    stem, parent = nf(f.stem), nf(f.parent.name)
+    if 'أمين السر' in stem: return '16.0'
+    if stem.startswith('2020'): return '2020'
+    n = re.match(r'(\d+)', stem).group(1)
+    return f'16.{n}' if parent.startswith('16 ') else n
+
 
 if __name__ == '__main__':
     root, dst = pathlib.Path(sys.argv[1]), sys.argv[2]
