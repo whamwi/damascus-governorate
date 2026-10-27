@@ -1,0 +1,46 @@
+article,unit_bylaws,card_key,staff_row,match,note
+16.0,أمين السر,16.0,,none,Single card for the Secretary of the Council; no staff row.
+16.1,مديرية المجالس المحلية,16.1,المجالس المحلية,exact,
+16.2,مديرية شؤون مالية أمانة السر,16.2,مالية الأمانة العامة,renamed,"""أمانة السر"" in the bylaws, ""الأمانة العامة"" in the staff sheet."
+16.3,مديرية شؤون العاملين (أمانة السر),16.3,التنمية الإدارية,assumed,HR appears in the staff sheet only as التنمية الإدارية; it may also absorb article 22. To confirm with DG.
+16.4,مديرية الشؤون العامة والقانونية,16.4,,none,No staff row. Possibly counted under القضايا والشؤون القانونية.
+16.5,مديرية العلاقات العامة,16.5,العلاقات العامة,exact,13 cards against 1 employee.
+16.6,مديرية الصحافة والثقافة والإعلام,16.6,الصحافة والثقافة والإعلام,exact,10 cards against 1 employee.
+16.7,دائرة المراسلات والمتابعة,16.7,,none,No staff row.
+17,مديرية الخدمات الفنية,17,الخدمات الفنية,exact,
+18,مديرية مكتب المحافظ,18,مكتب السيد المحافظ,exact,23 cards against 6 employees.
+19,مديرية الرقابة الداخلية,19,الرقابة الداخلية,exact,
+20,مديرية التنظيم والتخطيط العمراني,20,التنظيم والتخطيط العمراني,exact,Cards are split across 20-1 and 20-2.
+21,مديرية الشؤون المالية,21,الشؤون المالية,exact,Cards are split across 21-1 and 21-2.
+22,مديرية الشؤون الإدارية وشؤون العاملين (الذاتية),22,التنمية الإدارية,assumed,See 16.3: two HR units in the bylaws, one row in the staff sheet.
+23,مديرية المهن والرخص,23,المهن والرخص,exact,
+24,مديرية السجل المؤقت,24,السجل المؤقت,exact,
+25,مديرية شؤون الأملاك,25,الأملاك,exact,
+26,مديرية القضايا والشؤون القانونية,26,القضايا والشؤون القانونية,exact,
+27,مديرية المعلوماتية والتدريب والتأهيل,27,المعلوماتية,exact,
+28,مديرية الشؤون الصحية,28,الشؤون الصحية,exact,
+29,معمل معالجة القمامة,29,معالجة النفايات الصلبة,renamed,
+30,مديرية النظافة,30,النظافة,exact,
+31,مديرية الحدائق,31,الحدائق,exact,
+32,مديرية مدينة دمشق القديمة,32,دمشق القديمة,exact,
+33,مديرية دوائر الخدمات,33,دوائر الخدمات,exact,
+34,مديرية الصيانة,34,الصيانة والإنارة,renamed,May also absorb article 37.
+35,مديرية الدراسات الفنية,35,الدراسات الفنية,exact,
+36,مديرية الإشراف,36,الإشراف,exact,
+37,مديرية الميكانيك والكهرباء,37,,none,No staff row; possibly merged into الصيانة والإنارة.
+38,فوج الإطفاء,38,فوج الإطفاء,exact,
+39,مديرية المركبات والرحبات,39,المركبات والرحبات,exact,31 cards against 14 employees.
+40,مديرية معالجة مخلفات الدباغة,40,البيئة,assumed,Tannery-waste treatment is an environmental function; to confirm.
+41,قسم شرطة محافظة دمشق,,,none,No cards and no staff row.
+42,دائرة دفن الموتى,42,دائرة دفن الموتى,exact,
+43,مديرية هندسة المرور والنقل,43,هندسة المرور,exact,
+44,مديرية الإنتاج,44,,none,31 cards and no staff row.
+45,دار الكرامة,45,دار الكرامة,exact,44 cards against 12 employees.
+46,مديرية الأنشطة الرياضية والاجتماعية والثقافية,46,الأنشطة الرياضية,exact,
+2020,مديرية إعادة الإعمار والتأهيل (مسودة قرار),2020,إعادة الإعمار والتأهيل,exact,Added by a draft ministerial decision with no number; not part of 623/ن.
+,,,مراكز خدمة المواطن,staff-only,84 staff; no article and no cards.
+,,,تنفيذ المرسوم /66/,staff-only,24 staff; no article and no cards.
+,,,الشكاوي والتظلم,staff-only,1 employee. The bylaws have only مكتب الشكاوي inside article 18.
+,,,دعم القرار والتخطيط الإقليمي,staff-only,5 staff; no article and no cards.
+,,,قسم الجاهزية,staff-only,6 staff; no article and no cards.
+,,,التنمية المحلية,staff-only,Row present with 0 staff.
