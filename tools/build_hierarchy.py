@@ -44,7 +44,7 @@ for f in sorted(docx_root.rglob('*.docx')):
     for i, c in enumerate(cards(f), 1):
         if c['dept'] and re.match(r'(ال)?(قسم|فرع)\b', c['dept']) and not c['sub']:
             c['sub'], c['dept'] = c['dept'], None      # «قسم الشؤون الفنية» written as a دائرة
-        P.append({'id': f'{art}/{f.stem[:12]}/{i}', 'art': art, **c,
+        P.append({'id': f'{art}/{f.stem[:12]}/{i}', 'art': art, 'file': f.parent.name + '/' + f.stem, 'n': i, **c,
                   'lv': {k: key(canon(art, k, c[k])) for k in ('dept', 'sec', 'sub')}})
 
 # readable unit names, so a placeholder can say which unit it heads

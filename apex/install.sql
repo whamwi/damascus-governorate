@@ -16,8 +16,9 @@
 @data/2026-10-27_05_reporting_lines.sql
 @data/2026-10-27_06_staff_counts.sql
 
--- expect no rows
+-- expect no rows. VALIDATE is a reserved word in SQL (ORA-01747), so the call
+-- needs quotes here; PL/SQL callers can write it plainly.
 SELECT column_value AS problem
-  FROM TABLE(org_scenario_pkg.validate(
+  FROM TABLE(org_scenario_pkg."VALIDATE"(
          (SELECT scenario_id FROM org_scenario WHERE scenario_code = 'DG_ASIS_CARDS')))
  WHERE column_value NOT LIKE 'NO_HEAD:%';
