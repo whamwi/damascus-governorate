@@ -79,10 +79,10 @@ The usual order is المدير → دائرة → شعبة. The cards show two 
 
 ## Findings from the tree
 
-- **21 units have no head card**. Examples: دائرة الشؤون الإدارية in الشؤون
-  الصحية (6 positions under it), دائرة محاسبة المشاريع and دائرة الرواتب
-  والأجور in الشؤون المالية, شعبة الخدمات in دار الكرامة (4 positions), and
-  شعبة الإدارية in دوائر الخدمات (3). The full list is in the tree, in red.
+- **21 units have no head card**. Examples: شعبة الخدمات in دار الكرامة
+  (4 positions under it), شعبة الإدارية in دوائر الخدمات (3), دائرة صيانة
+  المنشآت in الصيانة, and دائرة محاسبة المشاريع and دائرة الرواتب والأجور in
+  الشؤون المالية. The full list is in the tree, in red, and in `org_v_review`.
 - **2020 reconstruction**: the cards add a «دائرة الديوان» that is not in
   article 2 of the draft decision (2 دوائر, 4 شعب). The director's card uses a
   newer template (الفئة الوظيفية, عدد مراكز العمل) that no other card uses.
