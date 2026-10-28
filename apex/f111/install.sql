@@ -3,6 +3,7 @@ prompt --install
 @@application/delete_application.sql
 @@application/create_application.sql
 @@workspace/credentials/app_111_push_notifications_credentials.sql
+@@application/shared_components/plugins/region_type/com_apexhierarchychart_plugin.sql
 @@application/plugin_settings.sql
 @@application/shared_components/navigation/lists/access_control.sql
 @@application/shared_components/navigation/lists/activity_reports.sql
@@ -53,6 +54,13 @@ prompt --install
 @@application/user_interfaces/combined_files.sql
 @@application/pages/page_00000.sql
 @@application/pages/page_00001.sql
+@@application/pages/page_00010.sql
+@@application/pages/page_00011.sql
+@@application/pages/page_00020.sql
+@@application/pages/page_00021.sql
+@@application/pages/page_00030.sql
+@@application/pages/page_00031.sql
+@@application/pages/page_00040.sql
 @@application/pages/page_09999.sql
 @@application/pages/page_10000.sql
 @@application/pages/page_10010.sql

@@ -45,6 +45,7 @@ MERGE INTO org_link_method t USING (
   SELECT 'FROM_STRUCTURE',     'لا رئيس في البطاقة، رُبط برئيس الوحدة الأعلى',             'INFERRED'    FROM dual UNION ALL
   SELECT 'PLACEHOLDER_UP',     'رئيس وحدة بلا بطاقة، رُبط بالوحدة الأعلى',                 'INFERRED'    FROM dual UNION ALL
   SELECT 'TOP',                'رأس الهيكل',                                               'STATED'      FROM dual UNION ALL
+  SELECT 'CONFIRMED_DG',       'أكّدته المحافظة في المراجعة',                              'STATED'      FROM dual UNION ALL
   SELECT 'UNLINKED',           'لم يُحدَّد الرئيس؛ وُضعت تحت مدير المديرية للعرض فقط',       'NONE'        FROM dual
 ) s ON (t.link_method_code = s.c)
 WHEN MATCHED THEN UPDATE SET t.name_ar = s.ar, t.confidence = s.cf

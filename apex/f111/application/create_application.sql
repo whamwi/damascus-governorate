@@ -47,7 +47,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_value_01=>unistr('\0645\0646\0635\0629 \0627\0644\0625\062F\0627\0631\0629 \0627\0644\0645\0624\0633\0633\064A\0629 - \0645\062D\0627\0641\0638\0629 \062F\0645\0634\0642')
 ,p_file_prefix=>nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>2461342172942
-,p_version_scn=>'51013650188054'
+,p_version_scn=>'51013676016751'
 ,p_print_server_type=>'NATIVE'
 ,p_file_storage=>'DB'
 ,p_is_pwa=>'Y'
