@@ -56,7 +56,7 @@ MERGE INTO jd_class t USING (
   SELECT 'MID_MGMT',   'إدارة وسطى',    'Middle management',    '#2B6CA3',     20    FROM dual UNION ALL
   SELECT 'ADMIN',      'إداري',         'Administrative',       '#4F7CAC',     30    FROM dual UNION ALL
   SELECT 'TECHNICAL',  'فني',           'Technical',            '#2E7D6B',     40    FROM dual UNION ALL
-  SELECT 'SERVICE',    'خدمي',          'Service',              '#8C6D1F',     50    FROM dual UNION ALL
+  SELECT 'SERVICE',    'خدمي',          'Service',              '#6A4C93',     50    FROM dual UNION ALL  -- not gold: amber #9A5B00 means «line to confirm»
   SELECT 'UNSPECIFIED','غير محدد',      'Not stated',           '#8A8F98',     99    FROM dual
 ) s ON (t.class_code = s.c)
 WHEN MATCHED THEN UPDATE SET t.name_ar = s.ar, t.name_en = s.en, t.display_colour = s.col, t.sort_order = s.so
