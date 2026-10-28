@@ -3,6 +3,7 @@ prompt --install
 @@application/delete_application.sql
 @@application/create_application.sql
 @@workspace/credentials/app_111_push_notifications_credentials.sql
+@@application/shared_components/plugins/region_type/apex_fancytree_select.sql
 @@application/shared_components/plugins/region_type/com_apexhierarchychart_plugin.sql
 @@application/plugin_settings.sql
 @@application/shared_components/navigation/lists/access_control.sql

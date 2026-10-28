@@ -17,24 +17,43 @@ wwv_flow_imp_page.create_page(
 ,p_alias=>'ORG-UNITS'
 ,p_step_title=>unistr('\0627\0644\0647\064A\0643\0644 \0627\0644\062A\0646\0638\064A\0645\064A')
 ,p_autocomplete_on_off=>'OFF'
-,p_step_template=>4073832297226169690
+,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+unistr('/* \0627\0644\0645\062E\0637\0637: \064A\062A\0645\0631\0631 \062F\0627\062E\0644 \0645\0646\0637\0642\062A\0647 */'),
+'#orgChart .t-Region-body{',
+'  overflow:auto;',
+'  -webkit-overflow-scrolling:touch;',
+'  max-width:100%;',
+'}',
+'',
+unistr('/* \0627\0644\0634\062C\0631\0629 \0641\064A \0627\0644\0639\0645\0648\062F \0627\0644\062C\0627\0646\0628\064A */'),
+'#orgTree .t-Region-body{',
+'  overflow:auto;',
+'  -webkit-overflow-scrolling:touch;',
+'}',
+'',
+unistr('/* \0627\0644\0634\0627\0634\0627\062A \0627\0644\0635\063A\064A\0631\0629: \062A\062D\0644 \0627\0644\0634\062C\0631\0629 \0645\062D\0644 \0627\0644\0645\062E\0637\0637 */'),
+'@media (max-width:600px){',
+'  #orgChart{ display:none; }',
+'  body.t-PageBody--hideLeft .t-Body-side{',
+'    display:block !important;',
+'    position:static !important;',
+'    width:100% !important;',
+'    transform:none !important;',
+'    visibility:visible !important;',
+'  }',
+'  .t-Body-side{ border:0; }',
+'  #orgTree .t-Region-body{ max-height:none; }',
+'}'))
+,p_step_template=>2528119710305719084
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'17'
 );
 wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(7000001000001)
-,p_plug_name=>unistr('\0627\0644\0633\064A\0646\0627\0631\064A\0648')
-,p_static_id=>unistr('\0627\0644\0633\064A\0646\0627\0631\064A\0648')
-,p_region_template_options=>'#DEFAULT#'
-,p_plug_template=>4502917002193490937
-,p_plug_display_sequence=>10
-,p_plug_item_display_point=>'ABOVE'
-);
-wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(7000001000003)
 ,p_plug_name=>unistr('\0627\0644\0647\064A\0643\0644 \0627\0644\062A\0646\0638\064A\0645\064A')
-,p_static_id=>unistr('\0627\0644\0647\064A\0643\0644-\0627\0644\062A\0646\0638\064A\0645\064A')
+,p_static_id=>'orgChart'
+,p_region_name=>'orgChart'
 ,p_region_template_options=>'#DEFAULT#:js-showMaximizeButton:t-Region--hideHeader js-addHiddenHeadingRoleDesc:t-Region--noBorder:t-Region--scrollBody'
 ,p_escape_on_http_output=>'Y'
 ,p_plug_template=>4073835273271169698
@@ -42,13 +61,27 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_item_display_point=>'ABOVE'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT id, parentid, "LEVEL", employeename AS postname, office AS category,',
-'       category_color',
-'  FROM org_v_chart_unit',
-' WHERE scenario_id = :P10_SCENARIO_ID',
-' ORDER BY sib'))
+'WITH r AS (',
+'  SELECT NVL((SELECT t.unit_id FROM org_unit t',
+'               WHERE t.unit_id = TO_NUMBER(REGEXP_SUBSTR(:P10_UNIT_ID, ''[^:]+$''))',
+'                 AND t.scenario_id = :P10_SCENARIO_ID),',
+'             (SELECT t.unit_id FROM org_unit t',
+'               WHERE t.scenario_id = :P10_SCENARIO_ID AND t.parent_unit_id IS NULL',
+'                 AND ROWNUM = 1)) AS root_id',
+'    FROM dual),',
+'sub AS (',
+'  SELECT unit_id AS id FROM org_unit',
+'   START WITH unit_id = (SELECT root_id FROM r)',
+'   CONNECT BY PRIOR unit_id = parent_unit_id)',
+'SELECT v.id,',
+'       CASE WHEN v.id = (SELECT TO_CHAR(root_id) FROM r) THEN NULL ELSE v.parentid END AS parentid,',
+'       v."LEVEL", v.employeename AS postname, v.office AS category, v.category_color',
+'  FROM org_v_chart_unit v',
+'  JOIN sub ON TO_CHAR(sub.id) = v.id',
+' WHERE v.scenario_id = :P10_SCENARIO_ID',
+' ORDER BY v.sib'))
 ,p_plug_source_type=>'PLUGIN_COM.APEXHIERARCHYCHART.PLUGIN'
-,p_ajax_items_to_submit=>'P10_SCENARIO_ID'
+,p_ajax_items_to_submit=>'P10_SCENARIO_ID,P10_UNIT_ID'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'id_column', 'ID',
   'node_button_template', wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -90,7 +123,7 @@ wwv_flow_imp_page.create_page_plug(
     '</div>',
     '',
     '')),
-  'node_height', '70',
+  'node_height', '72',
   'node_level_column', 'LEVEL',
   'node_template', wwv_flow_string.join(wwv_flow_t_varchar2(
     '<!-- Department Card container - Compact Design -->',
@@ -116,6 +149,84 @@ wwv_flow_imp_page.create_page_plug(
   'node_width', '180',
   'parent_id_column', 'PARENTID',
   'partial_data_load', 'N')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(7000001000501)
+,p_plug_name=>unistr('\0634\062C\0631\0629 \0627\0644\0648\062D\062F\0627\062A')
+,p_static_id=>'orgTree'
+,p_region_name=>'orgTree'
+,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--scrollBody'
+,p_escape_on_http_output=>'Y'
+,p_plug_template=>4073835273271169698
+,p_plug_display_sequence=>5
+,p_plug_display_point=>'REGION_POSITION_02'
+,p_plug_item_display_point=>'ABOVE'
+,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT "LEVEL",',
+'       TO_NUMBER(id)                       AS id,',
+'       NVL(TO_NUMBER(parentid), 0)         AS parent_id,',
+'       employeename                        AS title,',
+'       TO_NUMBER(id)                       AS value,',
+'       NULL                                AS type,',
+unistr('       office || '' \00B7 '' || positionname     AS tooltip,'),
+'       CASE WHEN category_color = ''#8A2432'' THEN ''fa fa-exclamation-triangle fam-circle fam-is-danger''',
+'            WHEN unit_type_code = ''GOVERNORATE'' THEN ''fa fa-university''',
+'            WHEN unit_type_code = ''SECRETARIAT'' THEN ''fa fa-briefcase''',
+'            WHEN unit_type_code = ''DIRECTORATE'' THEN ''fa fa-building-o''',
+'            WHEN unit_type_code IN (''QISM'',''BRANCH'',''DEPARTMENT'') THEN ''fa fa-sitemap''',
+'            WHEN unit_type_code = ''SECTION'' THEN ''fa fa-users''',
+'            ELSE ''fa fa-cube'' END          AS icon,',
+'       NULL                                AS selected,',
+'       CASE WHEN "LEVEL" <= 2 THEN 1 END   AS expanded,',
+'       0                                   AS checkbox,',
+'       0                                   AS unselectable',
+'  FROM org_v_chart_unit',
+' WHERE scenario_id = TO_NUMBER(:P10_SCENARIO_ID)',
+' ORDER BY sib'))
+,p_plug_source_type=>'PLUGIN_APEX.FANCYTREE.SELECT'
+,p_ajax_items_to_submit=>'P10_SCENARIO_ID'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'attribute_01', wwv_flow_string.join(wwv_flow_t_varchar2(
+    '{',
+    '  "animationDuration": 200,',
+    '  "autoExpand2Level": 2,',
+    '  "enableCheckBox": false,',
+    '  "forceSelectionSet": true,',
+    '  "forceRefreshEventOnStart": false,',
+    '  "iconExpanderOpen": "fa-caret-down",',
+    '  "iconExpanderClosed": "fa-caret-left",',
+    '  "markNodesWithChildren": false,',
+    '  "openParentOfActiveNode": true,',
+    '  "openParentOfSelected": true,',
+    '  "refresh": 0,',
+    '  "search": {',
+    '    "autoExpand": true,',
+    '    "leavesOnly": false,',
+    '    "highlight": true,',
+    '    "counter": true,',
+    '    "hideUnmatched": true,',
+    '    "debounce": {',
+    '      "enabled": true,',
+    '      "time": 400',
+    '    }',
+    '  },',
+    '  "selectMode": 1,',
+    '  "setActiveNode": true,',
+    '  "setItemsOnInit": false,',
+    '  "typeSettings": []',
+    '}')),
+  'attribute_03', unistr('\062A\0639\0630\0651\0631 \062A\062D\0645\064A\0644 \0627\0644\0634\062C\0631\0629. \0627\0644\062A\0641\0627\0635\064A\0644 \0641\064A \0648\062D\062F\0629 \062A\062D\0643\0645 \0627\0644\0645\062A\0635\0641\062D.'),
+  'attribute_04', 'P10_UNIT_ID',
+  'attribute_05', 'N')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(7000001000001)
+,p_plug_name=>unistr('\0627\0644\0633\064A\0646\0627\0631\064A\0648')
+,p_static_id=>unistr('\0627\0644\0633\064A\0646\0627\0631\064A\0648')
+,p_region_template_options=>'#DEFAULT#'
+,p_plug_template=>4502917002193490937
+,p_plug_display_sequence=>10
+,p_plug_item_display_point=>'ABOVE'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(7000001000004)
@@ -149,6 +260,41 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'page_action_on_selection', 'REDIRECT_SET_VALUE')).to_clob
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(7000001000502)
+,p_name=>'P10_UNIT_ID'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_imp.id(7000001000501)
+,p_source_type=>'ALWAYS_NULL'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'value_protected', 'N')).to_clob
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(7000001000503)
+,p_name=>unistr('\0625\0639\0627\062F\0629 \0631\0633\0645 \0627\0644\0645\062E\0637\0637 \0645\0646 \0627\0644\0639\0642\062F\0629 \0627\0644\0645\062E\062A\0627\0631\0629')
+,p_static_id=>unistr('\0625\0639\0627\062F\0629-\0631\0633\0645-\0627\0644\0645\062E\0637\0637-\0645\0646-\0627\0644\0639\0642\062F\0629-\0627\0644\0645\062E\062A\0627\0631\0629')
+,p_event_sequence=>10
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P10_UNIT_ID'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'change'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(7000001000504)
+,p_event_id=>wwv_flow_imp.id(7000001000503)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_static_id=>'native-refresh'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(7000001000003)
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'maintain_pagination', 'N')).to_clob
 );
 wwv_flow_imp.component_end;
 end;
