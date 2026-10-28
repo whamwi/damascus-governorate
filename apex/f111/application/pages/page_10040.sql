@@ -107,6 +107,7 @@ wwv_flow_imp_page.create_component_da_action(
 ,p_action_sequence=>10
 ,p_action=>'NATIVE_DIALOG_CANCEL'
 ,p_static_id=>'native-dialog-cancel'
+,p_stop_execution_on_error=>true
 );
 wwv_flow_imp_page.create_page_branch(
  p_id=>wwv_flow_imp.id(41106861164998312)
