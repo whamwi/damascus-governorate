@@ -70,12 +70,12 @@ wwv_flow_imp_page.create_page_plug(
 '                 AND ROWNUM = 1)) AS root_id',
 '    FROM dual),',
 'sub AS (',
-'  SELECT position_id AS id FROM org_position',
+'  SELECT position_id AS id, LEVEL AS lvl FROM org_position',
 '   START WITH position_id = (SELECT root_id FROM r)',
 '   CONNECT BY PRIOR position_id = reports_to_pos_id)',
 'SELECT v.id,',
 '       CASE WHEN v.id = (SELECT TO_CHAR(root_id) FROM r) THEN NULL ELSE v.parentid END AS parentid,',
-'       v."LEVEL",',
+'       sub.lvl AS "LEVEL",',
 '       CASE WHEN v.heads_unit = ''Y'' THEN v.office ELSE v.employeename END AS postname,',
 '       v.positionname AS category, v.category_color',
 '  FROM org_v_chart_position v',
@@ -86,6 +86,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_ajax_items_to_submit=>'P11_SCENARIO_ID,P11_POSITION_ID'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'id_column', 'ID',
+  'last_node_level_to_be_expanded', '2',
   'node_button_template', wwv_flow_string.join(wwv_flow_t_varchar2(
     '<div class="node-button-div" style="pointer-events: none; display: flex; width: 100%; height: 100%;">',
     '    <div style="',
@@ -150,7 +151,7 @@ wwv_flow_imp_page.create_page_plug(
   'node_template_column', 'POSTNAME,CATEGORY,CATEGORY_COLOR',
   'node_width', '180',
   'parent_id_column', 'PARENTID',
-  'partial_data_load', 'N')).to_clob
+  'partial_data_load', 'Y')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(7000001100501)
