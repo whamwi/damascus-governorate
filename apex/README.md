@@ -105,6 +105,25 @@ the CSV and regenerate:
 The file drops and rebuilds the scenario, so run it after `install.sql`.
 Expected: 595 units, 808 positions, 53 lineage rows (5 open), VALIDATE 23 × NO_HEAD.
 
+**Reloading the batch with the proposal in place stops at the first data file, on
+purpose.** `data/2026-10-27_00_*.sql` will not delete `DG_ASIS_CARDS` while a
+TO-BE was cloned from it. Reloading rebuilds both, and it also discards every
+line confirmed on page 31 in `DG_ASIS_CARDS`, so decide first. Then drop the
+proposal and run `install.sql` again; it rebuilds `DG_TOBE_3_1` at the end:
+
+    BEGIN
+      FOR o IN (SELECT scenario_id FROM org_scenario WHERE scenario_code = 'DG_TOBE_3_1') LOOP
+        UPDATE org_position SET reports_to_pos_id = NULL WHERE scenario_id = o.scenario_id;
+        DELETE FROM org_position WHERE scenario_id = o.scenario_id;
+        UPDATE org_unit SET parent_unit_id = NULL WHERE scenario_id = o.scenario_id;
+        DELETE FROM org_unit WHERE scenario_id = o.scenario_id;
+        DELETE FROM org_unit_lineage WHERE scenario_id = o.scenario_id;
+        DELETE FROM org_scenario WHERE scenario_id = o.scenario_id;
+      END LOOP;
+      COMMIT;
+    END;
+    /
+
 ## 5. Loading the next batch
 
 ```
