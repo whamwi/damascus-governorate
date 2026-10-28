@@ -101,8 +101,8 @@ class Page:
 
     def classic(self, name, seq, sql, cols, row_template=R_STD, template=T_STD, no_data='لا توجد بيانات', **p):
         """cols: (alias, heading, align, hidden)"""
+        p = {'region_template_options': '#DEFAULT#', 'component_template_options': '#DEFAULT#', **p}
         self.add('wwv_flow_imp_page.create_report_region', name=name, template=template, display_sequence=seq,
-                 region_template_options='#DEFAULT#', component_template_options='#DEFAULT#',
                  source_type='NATIVE_SQL_REPORT', query_type='SQL', source=sql, ajax_enabled='Y',
                  lazy_loading=False, query_row_template=row_template, query_num_rows=50,
                  query_options='DERIVED_REPORT_COLUMNS', query_no_data_found=no_data,

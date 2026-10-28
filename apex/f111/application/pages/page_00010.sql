@@ -172,6 +172,7 @@ wwv_flow_imp_page.create_page_plug(
 unistr('       office || '' \00B7 '' || positionname     AS tooltip,'),
 '       CASE WHEN category_color = ''#8A2432'' THEN ''fa fa-exclamation-triangle fam-circle fam-is-danger''',
 '            WHEN unit_type_code = ''GOVERNORATE'' THEN ''fa fa-university''',
+'            WHEN unit_type_code = ''SECTOR'' THEN ''fa fa-th-large''',
 '            WHEN unit_type_code = ''SECRETARIAT'' THEN ''fa fa-briefcase''',
 '            WHEN unit_type_code = ''DIRECTORATE'' THEN ''fa fa-building-o''',
 '            WHEN unit_type_code IN (''QISM'',''BRANCH'',''DEPARTMENT'') THEN ''fa fa-sitemap''',

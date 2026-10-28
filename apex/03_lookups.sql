@@ -4,6 +4,7 @@
 
 MERGE INTO org_unit_type t USING (
   SELECT 'GOVERNORATE' c, 'المحافظة'      ar, 'Governorate'    en, 1 lv, '#0B2545' col, 10 so FROM dual UNION ALL
+  SELECT 'SECTOR',        'قطاع',          'Sector (deputy)',    2,    '#13315C',     15    FROM dual UNION ALL
   SELECT 'SECRETARIAT',   'أمانة السر',    'Secretariat',        2,    '#13315C',     20    FROM dual UNION ALL
   SELECT 'DIRECTORATE',   'مديرية',        'Directorate',        2,    '#134074',     30    FROM dual UNION ALL
   SELECT 'QISM',          'قسم',           'Division',           3,    '#1D5C8A',     40    FROM dual UNION ALL
@@ -24,7 +25,8 @@ MERGE INTO org_source_type t USING (
   SELECT 'BYLAWS' c,       'النظام الداخلي (القرار 623/ن والقرار 504/ن)' ar, 'Bylaws' en FROM dual UNION ALL
   SELECT 'CARDS',          'بطاقات الوصف الوظيفي',                     'Job description cards'    FROM dual UNION ALL
   SELECT 'DRAFT_DECISION', 'مسودة قرار غير صادر',                      'Draft decision, not issued' FROM dual UNION ALL
-  SELECT 'MANUAL',         'إدخال يدوي',                               'Manual entry'             FROM dual
+  SELECT 'MANUAL',         'إدخال يدوي',                               'Manual entry'             FROM dual UNION ALL
+  SELECT 'PROPOSAL',       'مقترح هيكلية (عرض المحافظة)',              'Proposed structure'       FROM dual
 ) s ON (t.source_type_code = s.c)
 WHEN MATCHED THEN UPDATE SET t.name_ar = s.ar, t.name_en = s.en
 WHEN NOT MATCHED THEN INSERT (source_type_code, name_ar, name_en) VALUES (s.c, s.ar, s.en);
@@ -46,6 +48,7 @@ MERGE INTO org_link_method t USING (
   SELECT 'PLACEHOLDER_UP',     'رئيس وحدة بلا بطاقة، رُبط بالوحدة الأعلى',                 'INFERRED'    FROM dual UNION ALL
   SELECT 'TOP',                'رأس الهيكل',                                               'STATED'      FROM dual UNION ALL
   SELECT 'CONFIRMED_DG',       'أكّدته المحافظة في المراجعة',                              'STATED'      FROM dual UNION ALL
+  SELECT 'PROPOSAL',           'كما في الهيكلية المقترحة',                                 'STATED'      FROM dual UNION ALL
   SELECT 'UNLINKED',           'لم يُحدَّد الرئيس؛ وُضعت تحت مدير المديرية للعرض فقط',       'NONE'        FROM dual
 ) s ON (t.link_method_code = s.c)
 WHEN MATCHED THEN UPDATE SET t.name_ar = s.ar, t.confidence = s.cf

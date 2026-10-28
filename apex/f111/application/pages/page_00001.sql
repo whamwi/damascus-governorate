@@ -28,8 +28,8 @@ wwv_flow_imp_page.create_report_region(
 ,p_static_id=>unistr('\0627\0644\0623\0631\0642\0627\0645')
 ,p_template=>4073835273271169698
 ,p_display_sequence=>10
-,p_region_template_options=>'#DEFAULT#'
-,p_component_template_options=>'#DEFAULT#'
+,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--noUI:t-Region--scrollBody'
+,p_component_template_options=>'#DEFAULT#:u-colors:t-BadgeList--large:t-BadgeList--dash:t-BadgeList--fixed'
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -46,8 +46,6 @@ wwv_flow_imp_page.create_report_region(
 ,p_query_num_rows=>50
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_query_no_data_found=>unistr('\0644\0627 \062A\0648\062C\062F \0628\064A\0627\0646\0627\062A')
-,p_query_num_rows_type=>'NEXT_PREVIOUS_LINKS'
-,p_pagination_display_position=>'BOTTOM_RIGHT'
 ,p_csv_output=>'N'
 ,p_prn_output=>'N'
 ,p_sort_null=>'L'
@@ -299,7 +297,7 @@ wwv_flow_imp_page.create_report_region(
 ,p_template=>4073835273271169698
 ,p_display_sequence=>40
 ,p_region_template_options=>'#DEFAULT#'
-,p_component_template_options=>'#DEFAULT#'
+,p_component_template_options=>'#DEFAULT#:t-Report--stretch:t-Report--altRowsDefault:t-Report--rowHighlight'
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -335,7 +333,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_column_alias=>'ROW_LABEL'
 ,p_column_display_sequence=>1
 ,p_column_heading=>unistr('\0627\0644\0648\062D\062F\0629 \0643\0645\0627 \0648\0631\062F\062A \0641\064A \062C\062F\0648\0644 \0627\0644\062A\0648\0632\064A\0639')
-,p_heading_alignment=>'LEFT'
+,p_heading_alignment=>'RIGHT'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );

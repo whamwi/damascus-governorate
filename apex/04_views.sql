@@ -120,3 +120,40 @@ SELECT s.batch_id, s.row_label, s.unit_code, s.match_kind,
        SUM(s.staff)                                                                               AS total
   FROM dg_staff_count s
  GROUP BY s.batch_id, s.row_label, s.unit_code, s.match_kind;
+
+-- a scenario against the one it was built from, unit by unit, as recorded in
+-- org_unit_lineage. Counts are of each unit's whole subtree, in its own scenario.
+CREATE OR REPLACE VIEW org_v_scenario_compare AS
+SELECT l.lineage_id, l.scenario_id, l.source_scenario_id,
+       l.unit_code, u.name_ar AS unit_ar,
+       CASE WHEN u.unit_type_code IN ('SECTOR','GOVERNORATE') THEN u.name_ar
+            WHEN pu.unit_type_code = 'SECTOR' THEN pu.name_ar
+            WHEN u.unit_id IS NOT NULL THEN 'يتبع المحافظ مباشرة'
+       END AS sector_ar,
+       CASE WHEN u.unit_type_code IN ('SECTOR','GOVERNORATE') THEN u.sort_order
+            WHEN pu.unit_type_code = 'SECTOR' THEN pu.sort_order
+            WHEN u.unit_id IS NOT NULL THEN 0 ELSE 9999 END AS sector_sort,
+       l.relation,
+       DECODE(l.relation, 'SAME', 'كما هي', 'RENAMED', 'تغيّر اسمها', 'MERGED', 'دُمجت',
+                          'SPLIT', 'فُصلت', 'NEW', 'جديدة', 'ABOLISHED', 'لم توضع') AS relation_ar,
+       l.confidence, l.is_open, l.note,
+       l.source_unit_code, su.name_ar AS source_unit_ar,
+       (SELECT COUNT(*) FROM org_position p
+         WHERE p.scenario_id = l.source_scenario_id
+           AND p.unit_id IN (SELECT unit_id FROM org_unit
+                              START WITH scenario_id = l.source_scenario_id AND unit_code = l.source_unit_code
+                              CONNECT BY PRIOR unit_id = parent_unit_id))           AS source_positions,
+       (SELECT COUNT(p.card_id) FROM org_position p
+         WHERE p.scenario_id = l.source_scenario_id
+           AND p.unit_id IN (SELECT unit_id FROM org_unit
+                              START WITH scenario_id = l.source_scenario_id AND unit_code = l.source_unit_code
+                              CONNECT BY PRIOR unit_id = parent_unit_id))           AS source_cards,
+       (SELECT COUNT(*) FROM org_position p
+         WHERE p.scenario_id = l.scenario_id
+           AND p.unit_id IN (SELECT unit_id FROM org_unit
+                              START WITH scenario_id = l.scenario_id AND unit_code = l.unit_code
+                              CONNECT BY PRIOR unit_id = parent_unit_id))           AS positions
+  FROM org_unit_lineage l
+  LEFT JOIN org_unit u  ON u.scenario_id = l.scenario_id AND u.unit_code = l.unit_code
+  LEFT JOIN org_unit pu ON pu.unit_id = u.parent_unit_id
+  LEFT JOIN org_unit su ON su.scenario_id = l.source_scenario_id AND su.unit_code = l.source_unit_code;

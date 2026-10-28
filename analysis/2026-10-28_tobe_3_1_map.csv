@@ -1,0 +1,50 @@
+tobe_code,tobe_name,sector,asis_codes,relation,confidence,note,note_ar
+T-GOV,محافظ مدينة دمشق,,U-GOV,same,high,Top of both structures.,رأس الهيكلين.
+T-S-FIN,معاون الشؤون المالية والإدارية,,,new,high,Sector deputy. Slides 1-3 of deck 3.1.,معاون قطاع، من الشرائح 1–3 في عرض الهيكلية 3.1.
+T-S-TECH,معاون القطاع الفني,,,new,high,Sector deputy.,معاون قطاع.
+T-S-MUN,معاون القطاع البلدي,,,new,high,Sector deputy.,معاون قطاع.
+T-S-CIT,معاون شؤون خدمة المواطن,,,new,high,Sector deputy.,معاون قطاع.
+T-S-ENV,معاون القطاع البيئي,,,new,high,Sector deputy.,معاون قطاع.
+T-S-DEV,معاون قطاع التنمية,,,new,high,Sector deputy.,معاون قطاع.
+U-18,مديرية مكتب المحافظ,CENTRAL,U-18,same,high,Central office. Deck 3.1 gives it دوائر الجاهزية، الدعم التنفيذي، المتابعة، العلاقات الخارجية، التقارير and شعبة الضيافة; today's card structure has none of these.,من المكاتب المركزية. يعطيها العرض دوائر الجاهزية والدعم التنفيذي والمتابعة والعلاقات الخارجية والتقارير وشعبة الضيافة، ولا شيء منها في هيكلها القائم كما تصفه البطاقات.
+U-16.5,مديرية العلاقات العامة,CENTRAL,U-16.5,same,high,Moves from under أمانة السر to directly under the governor.,تنتقل من أمانة السر لتتبع المحافظ مباشرة.
+U-22,مديرية التنمية الإدارية,CENTRAL,U-22|U-16.3,merged,medium,Today's ذاتية (art. 22) and شؤون العاملين of أمانة السر (art. 16.3). The statistics sheet calls HR «التنمية الإدارية» (339 staff). Also receives دائرة المستوصفات from the dissolved مديرية الرعاية.,تجمع الذاتية (المادة 22) وشؤون العاملين في أمانة السر (16.3). جدول الإحصائية يسمي الموارد البشرية «التنمية الإدارية» (339 عاملاً). وتتلقى دائرة المستوصفات من مديرية الرعاية المقترح حلّها.
+U-16.6,مديرية الإعلام,CENTRAL,U-16.6,renamed,high,Today «الصحافة والثقافة والإعلام». Culture appears to move to الأنشطة الرياضية والثقافية.,اسمها اليوم «الصحافة والثقافة والإعلام»؛ يبدو أن الثقافة تنتقل إلى الأنشطة الرياضية والثقافية.
+U-19,مديرية الرقابة,CENTRAL,U-19,renamed,high,Today «الرقابة الداخلية».,اسمها اليوم «الرقابة الداخلية».
+T-D-PLAN,مديرية التخطيط الإقليمي ودعم القرار,CENTRAL,,new,high,No card today. The statistics sheet has «دعم القرار والتخطيط الإقليمي» with 10 staff: exists de facto.,لا بطاقات لها اليوم. في جدول الإحصائية «دعم القرار والتخطيط الإقليمي» بعشرة عاملين: قائمة فعلاً.
+T-D-COMPL,مديرية الشكاوى,CENTRAL,,new,high,No card today. Statistics sheet: «الشكاوي والتظلم» 15 staff; de facto.,لا بطاقات لها اليوم. في جدول الإحصائية «الشكاوي والتظلم» بخمسة عشر عاملاً: قائمة فعلاً.
+U-27,مديرية التقانة والتحول الرقمي,CENTRAL,U-27,renamed,medium,Today «المعلوماتية والتدريب والتأهيل». Training probably goes to التنمية الإدارية; not stated.,اسمها اليوم «المعلوماتية والتدريب والتأهيل». الأرجح أن التدريب ينتقل إلى التنمية الإدارية؛ لم يُذكر.
+U-16.1,مديرية المجالس المحلية,CENTRAL,U-16.1,same,high,Moves from under أمانة السر to directly under the governor.,تنتقل من أمانة السر لتتبع المحافظ مباشرة.
+U-21,المديرية المالية,T-S-FIN,U-21|U-16.2,merged,medium,"Today's الشؤون المالية (art. 21) and مالية أمانة السر (16.2), which the statistics sheet still counts separately (216 + 29).",تجمع الشؤون المالية (المادة 21) ومالية أمانة السر (16.2)، وجدول الإحصائية ما زال يعدّهما منفصلتين (216 + 29).
+U-25,مديرية الأملاك والاستثمار,T-S-FIN,U-25,renamed,high,Today «شؤون الأملاك».,اسمها اليوم «شؤون الأملاك».
+U-26,مديرية الشؤون القانونية,T-S-FIN,U-26|U-16.4,merged,medium,Today's القضايا والشؤون القانونية (26) and الشؤون العامة والقانونية of أمانة السر (16.4).,تجمع القضايا والشؤون القانونية (26) والشؤون العامة والقانونية في أمانة السر (16.4).
+U-39,مديرية المركبات,T-S-FIN,U-39,renamed,high,Today «المركبات والرحبات».,اسمها اليوم «المركبات والرحبات».
+U-17,مديرية الخدمات الفنية,T-S-TECH,U-17,same,high,,
+U-2020,مديرية إعادة التأهيل,T-S-TECH,U-2020,renamed,high,"Today «إعادة الإعمار والتأهيل», from the unissued 2020 draft decision.",اسمها اليوم «إعادة الإعمار والتأهيل»، من مسودة قرار عام 2020 غير الصادرة.
+U-35,مديرية الدراسات,T-S-TECH,U-35,renamed,high,Today «الدراسات الفنية».,اسمها اليوم «الدراسات الفنية».
+U-20,مديرية التخطيط والتنظيم العمراني,T-S-TECH,U-20,same,high,,
+U-36,مديرية الإشراف,T-S-TECH,U-36,same,high,,
+T-D-66,مديرية المرسوم 66,T-S-TECH,,new,high,No card today. Statistics sheet: «تنفيذ المرسوم /66/» 58 staff; de facto.,لا بطاقات لها اليوم. في جدول الإحصائية «تنفيذ المرسوم /66/» بثمانية وخمسين عاملاً: قائمة فعلاً.
+U-32,مديرية دمشق القديمة,T-S-MUN,U-32,same,high,,
+T-D-TRANS,مديرية نقل الركاب,T-S-MUN,,new,low,"No card, no staff row. Possibly carved out of هندسة المرور والنقل (its مراكز الانطلاق); to confirm.",لا بطاقات لها ولا سطر في جدول الإحصائية. ربما تُقتطع من هندسة المرور والنقل (مراكز الانطلاق)؛ للتأكيد.
+U-33,دوائر الخدمات,T-S-MUN,U-33,same,high,Also receives دائرة القوارض from the dissolved مديرية الرعاية.,وتتلقى دائرة القوارض من مديرية الرعاية المقترح حلّها.
+U-34,مديرية الصيانة,T-S-MUN,U-34,same,medium,"Today «الصيانة», de facto «الصيانة والإنارة». The proposal splits lighting into its own directorate.",اسمها اليوم «الصيانة»، وفعلياً «الصيانة والإنارة». المقترح يفصل الإنارة في مديرية مستقلة.
+T-D-LIGHT,مديرية الإنارة,T-S-MUN,U-37,split,low,"Lighting, out of الصيانة والإنارة. The 2003 bylaws have it as الميكانيك والكهرباء (art. 37); the statistics sheet has no separate row. To confirm.",الإنارة، تُفصل من الصيانة والإنارة. في النظام الداخلي لعام 2003 هي الميكانيك والكهرباء (المادة 37)، ولا سطر مستقلاً لها في جدول الإحصائية؛ للتأكيد.
+U-23,مديرية المهن والرخص,T-S-MUN,U-23,same,high,Also receives دائرة الرخص الصحية from the dissolved مديرية الرعاية.,وتتلقى دائرة الرخص الصحية من مديرية الرعاية المقترح حلّها.
+U-43,مديرية هندسة المرور,T-S-MUN,U-43,renamed,high,Today «هندسة المرور والنقل».,اسمها اليوم «هندسة المرور والنقل».
+U-42,مديرية دفن الموتى,T-S-CIT,U-42,same,high,Today a دائرة in the bylaws; already a مديرية de facto.,دائرة في النظام الداخلي، ومديرية فعلاً اليوم.
+U-28,مديرية الوقاية الصحية,T-S-CIT,U-28,renamed,medium,"Today «الشؤون الصحية». The note on slide 6 dissolves «مديرية الرعاية» over time; that is probably this directorate's care side, not a separate unit. To confirm.",اسمها اليوم «الشؤون الصحية». ملاحظة الشريحة 6 تحلّ «مديرية الرعاية» بعد مدة؛ الأرجح أنها جانب الرعاية في هذه المديرية لا وحدة مستقلة؛ للتأكيد.
+T-D-CITSVC,مديرية خدمة المواطن,T-S-CIT,,new,high,No card today. Statistics sheet: «مراكز خدمة المواطن» 421 staff; de facto.,لا بطاقات لها اليوم. في جدول الإحصائية «مراكز خدمة المواطن» بـ421 عاملاً: قائمة فعلاً.
+U-24,مديرية السجل المؤقت,T-S-CIT,U-24,same,high,,
+U-30,مديرية النظافة وإدارة النفايات,T-S-ENV,U-30|U-29,merged,medium,Today's النظافة (30) and معمل معالجة القمامة (29). The statistics sheet still has «معالجة النفايات الصلبة» separately (77 staff).,تجمع النظافة (30) ومعمل معالجة القمامة (29)، وجدول الإحصائية ما زال يعدّ «معالجة النفايات الصلبة» منفصلة (77 عاملاً).
+T-D-ENV,مديرية البيئة,T-S-ENV,,new,high,No card today. Statistics sheet: «البيئة» 47 staff; de facto.,لا بطاقات لها اليوم. في جدول الإحصائية «البيئة» بسبعة وأربعين عاملاً: قائمة فعلاً.
+U-31,مديرية الحدائق,T-S-ENV,U-31,same,high,,
+T-D-LOCAL,مديرية التنمية المحلية,T-S-DEV,,new,high,No card today. Statistics sheet: «التنمية المحلية» 17 staff; de facto.,لا بطاقات لها اليوم. في جدول الإحصائية «التنمية المحلية» بسبعة عشر عاملاً: قائمة فعلاً.
+U-46,مديرية الأنشطة الرياضية,T-S-DEV,U-46,same,high,,
+U-45,دار الكرامة,T-S-DEV,U-45,same,high,,
+T-D-LIC,مديرية التراخيص,?,,new,low,"Only on slide 2 of deck 3.1, not on any sector slide. Building licences are a دائرة of التخطيط والتنظيم العمراني today. Which sector, and is it real? To confirm.",ترد في الشريحة 2 من العرض فقط، لا في أي شريحة قطاع. رخص البناء اليوم دائرة في التخطيط والتنظيم العمراني. هل هي مقترحة فعلاً، وفي أي قطاع؟ للتأكيد.
+,(not placed) أمانة السر,,U-16,abolished,medium,The secretariat level disappears; its directorates move under the governor or merge. Its own head (أمين السر) remains in مكتب المحافظ per slide 1.,يزول مستوى أمانة السر؛ تنتقل مديرياتها إلى المحافظ أو تُدمج. أمين السر نفسه يبقى في مكتب المحافظ بحسب الشريحة 1.
+,(not placed) دائرة المراسلات والمتابعة,,U-16.7,abolished,low,Not in the proposal. Probably absorbed by مكتب المحافظ (دائرة المتابعة); to confirm.,غير واردة في المقترح. الأرجح أن تستوعبها دائرة المتابعة في مكتب المحافظ؛ للتأكيد.
+,(not placed) فوج الإطفاء,,U-38,abolished,low,Not in the proposal. The screening says it is under التنمية الإدارية today; 257 staff. Must go somewhere; to confirm.,غير وارد في المقترح. يتبع اليوم التنمية الإدارية بحسب الاستبيان، وفيه 257 عاملاً. لا بد له من مكان؛ للتأكيد.
+,(not placed) مديرية معالجة مخلفات الدباغة,,U-40,abolished,high,The screening (ج-2) says it was abolished de facto.,ألغيت فعلاً بحسب الاستبيان (ج-2).
+,(not placed) مديرية الإنتاج,,U-44,abolished,high,The screening (ج-2) says it was abolished de facto.,ألغيت فعلاً بحسب الاستبيان (ج-2).
