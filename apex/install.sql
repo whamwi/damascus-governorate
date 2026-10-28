@@ -19,6 +19,10 @@
 -- the proposed structure 3.1 (TO-BE), built from the batch above
 @data/2026-10-28_tobe_3_1.sql
 
+-- the de facto structure (deck of 28/10) and DG's headcount of 30/9
+@data/2026-10-28_defacto.sql
+@data/2026-09-30_headcount.sql
+
 -- expect no rows. VALIDATE is a reserved word in SQL (ORA-01747), so the call
 -- needs quotes here; PL/SQL callers can write it plainly.
 SELECT column_value AS problem

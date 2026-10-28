@@ -13,7 +13,8 @@ read from their data model. Boxes that name a person rather than a unit
 
 Output, one row per unit box: slide, directorate (the chart's root), the
 unit, its parent, the type read from the first word, and how the edge was
-found (CONNECTOR / BUS / SMARTART / UNATTACHED).
+found (CONNECTOR / BUS / SMARTART / UNATTACHED), with the box ids that make
+the parent unambiguous where a name repeats (ROOT: the directorate itself).
 """
 import csv, math, re, sys, unicodedata
 from pptx import Presentation
@@ -187,14 +188,15 @@ def tree_rows(n, boxes, edges):
             continue
         k = kind(b.label)
         if k == 'PERSON':
-            rows.append([n, root.label if root else '', b.label, '', k, 'PERSON'])
+            rows.append([n, root.label if root else '', b.label, '', k, 'PERSON', b.id, ''])
             continue
         up = unit_parent(b.id)
         how = parent[b.id][1] if b.id in parent else 'UNATTACHED'
         up_label = boxes[up].label if up else ''
         if up and root and up == root.id:
             up_label = '(المديرية)'
-        rows.append([n, root.label if root else '', b.label, up_label, k, how])
+        up_id = 'ROOT' if up and root and up == root.id else (up or '')
+        rows.append([n, root.label if root else '', b.label, up_label, k, how, b.id, up_id])
     return rows
 
 
@@ -213,7 +215,7 @@ if __name__ == '__main__':
         report.append((n, len(boxes), len(edges), unresolved, sum(1 for x in r if x[5] == 'UNATTACHED')))
     with open(out, 'w', encoding='utf-8', newline='') as f:
         w = csv.writer(f)
-        w.writerow(['slide', 'directorate', 'unit', 'parent', 'type', 'edge'])
+        w.writerow(['slide', 'directorate', 'unit', 'parent', 'type', 'edge', 'box_id', 'parent_box_id'])
         w.writerows(rows)
     print('slide boxes edges unresolved_lines unattached_boxes')
     for r in report:

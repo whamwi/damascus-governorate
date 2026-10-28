@@ -292,3 +292,44 @@ CREATE INDEX IF NOT EXISTS org_unit_lineage_ix ON org_unit_lineage (scenario_id,
 
 -- scratch ids for tools/gen_tobe_sql.py (leaving a subtree out of a scenario)
 CREATE GLOBAL TEMPORARY TABLE IF NOT EXISTS org_unit_tmp_ids (id NUMBER) ON COMMIT PRESERVE ROWS;
+
+-- rows staged by a generated load (tools/gen_defacto_sql.py) before the PL/SQL that
+-- builds the scenario reads them; a real table, since every ORDS request is its own
+-- session. ROW_KIND: UNIT (a unit of the new scenario), SOURCE (a second unit it
+-- absorbs), GONE (a unit of the source scenario with no place in the new one).
+CREATE TABLE IF NOT EXISTS org_load_unit (
+  load_code        VARCHAR2(30 CHAR)   NOT NULL,
+  seq              NUMBER(6)           NOT NULL,
+  row_kind         VARCHAR2(10 CHAR)   NOT NULL,
+  unit_code        VARCHAR2(40 CHAR),
+  parent_code      VARCHAR2(40 CHAR),
+  unit_type_code   VARCHAR2(30 CHAR),
+  name_ar          VARCHAR2(400 CHAR),
+  source_unit_code VARCHAR2(40 CHAR),
+  relation         VARCHAR2(20 CHAR),
+  confidence       VARCHAR2(10 CHAR),
+  is_open          VARCHAR2(1 CHAR)    DEFAULT 'N',
+  carry_subtree    VARCHAR2(1 CHAR)    DEFAULT 'N',   -- no chart: bring the source's units below as they are
+  note             VARCHAR2(4000 CHAR),
+  CONSTRAINT org_load_unit_pk   PRIMARY KEY (load_code, seq),
+  CONSTRAINT org_load_unit_kind CHECK (row_kind IN ('UNIT','SOURCE','GONE'))
+);
+
+-------------------------------------------------------------------- headcount --
+-- DG's «إحصائية محافظة دمشق»: staff per row of its sheet, as of a date. ROW_LABEL is
+-- DG's; UNIT_CODE is the de facto directorate the row was matched to by hand
+-- (analysis/2026-10-28_defacto_map.csv, column stats_row).
+CREATE TABLE IF NOT EXISTS dg_headcount (
+  as_of          DATE                NOT NULL,
+  row_label      VARCHAR2(200 CHAR)  NOT NULL,
+  unit_code      VARCHAR2(40 CHAR),
+  total          NUMBER(6)           NOT NULL,
+  cat1           NUMBER(6), cat2 NUMBER(6), cat3 NUMBER(6), cat4 NUMBER(6), cat5 NUMBER(6),
+  permanent      NUMBER(6),
+  contract_50    NUMBER(6),
+  contract_53    NUMBER(6),
+  seasonal       NUMBER(6),
+  expatriate     NUMBER(6),
+  note           VARCHAR2(400 CHAR),
+  CONSTRAINT dg_headcount_pk PRIMARY KEY (as_of, row_label)
+);

@@ -56,6 +56,15 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_current_for_pages=>'30,31'
 );
 wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(7000000900080)
+,p_list_item_display_sequence=>80
+,p_list_item_link_text=>unistr('\0627\0644\0647\064A\0627\0643\0644 \0627\0644\062B\0644\0627\062B\0629')
+,p_static_id=>unistr('\0627\0644\0647\064A\0627\0643\0644-\0627\0644\062B\0644\0627\062B\0629')
+,p_list_item_link_target=>'f?p=&APP_ID.:42:&APP_SESSION.::&DEBUG.:::'
+,p_list_item_icon=>'fa-table'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(7000000900020)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>unistr('\0627\0644\0647\064A\0643\0644 \0627\0644\062A\0646\0638\064A\0645\064A')

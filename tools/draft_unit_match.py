@@ -80,14 +80,15 @@ if __name__ == '__main__':
                          'dir_match_score': f'{score:.2f}', 'unit': u['unit'], 'parent': u['parent'],
                          'type': u['type'], 'edge': u['edge'], 'match': how,
                          'asis_code': a['unit_code'] if a else '', 'asis_name': a['name_ar'] if a else '',
-                         'asis_positions': a['positions'] if a else '', 'confidence': conf, 'note': ''})
+                         'asis_positions': a['positions'] if a else '', 'confidence': conf, 'note': '',
+                         'box_id': u['box_id'], 'parent_box_id': u['parent_box_id'] or 'ROOT'})
         for a in pool:
             if a['unit_code'] not in used:
                 used.add(a['unit_code'])
                 rows.append({'slide': slide, 'defacto_dir': m['defacto_code'], 'dir_name': m['defacto_name'],
                              'dir_match_score': f'{score:.2f}', 'unit': '', 'parent': '', 'type': a['unit_type_code'],
                              'edge': '', 'match': 'NOT_IN_DECK', 'asis_code': a['unit_code'], 'asis_name': a['name_ar'],
-                             'asis_positions': a['positions'], 'confidence': 'review', 'note': ''})
+                             'asis_positions': a['positions'], 'confidence': 'review', 'note': '', 'box_id': '', 'parent_box_id': ''})
     with open(out, 'w', encoding='utf-8', newline='') as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader(); w.writerows(rows)

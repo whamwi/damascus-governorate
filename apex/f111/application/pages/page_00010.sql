@@ -16,6 +16,7 @@ wwv_flow_imp_page.create_page(
 ,p_name=>unistr('\0627\0644\0647\064A\0643\0644 \0627\0644\062A\0646\0638\064A\0645\064A')
 ,p_alias=>'ORG-UNITS'
 ,p_step_title=>unistr('\0627\0644\0647\064A\0643\0644 \0627\0644\062A\0646\0638\064A\0645\064A')
+,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 unistr('/* \0627\0644\0645\062E\0637\0637: \064A\062A\0645\0631\0631 \062F\0627\062E\0644 \0645\0646\0637\0642\062A\0647 */'),

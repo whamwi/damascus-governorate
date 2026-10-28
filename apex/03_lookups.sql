@@ -26,7 +26,8 @@ MERGE INTO org_source_type t USING (
   SELECT 'CARDS',          'بطاقات الوصف الوظيفي',                     'Job description cards'    FROM dual UNION ALL
   SELECT 'DRAFT_DECISION', 'مسودة قرار غير صادر',                      'Draft decision, not issued' FROM dual UNION ALL
   SELECT 'MANUAL',         'إدخال يدوي',                               'Manual entry'             FROM dual UNION ALL
-  SELECT 'PROPOSAL',       'مقترح هيكلية (عرض المحافظة)',              'Proposed structure'       FROM dual
+  SELECT 'PROPOSAL',       'مقترح هيكلية (عرض المحافظة)',              'Proposed structure'       FROM dual UNION ALL
+  SELECT 'DEFACTO',        'الهيكل الفعلي (عرض التنمية الإدارية)',      'De facto structure deck'  FROM dual
 ) s ON (t.source_type_code = s.c)
 WHEN MATCHED THEN UPDATE SET t.name_ar = s.ar, t.name_en = s.en
 WHEN NOT MATCHED THEN INSERT (source_type_code, name_ar, name_en) VALUES (s.c, s.ar, s.en);

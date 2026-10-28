@@ -619,7 +619,7 @@ def install(root, plugin_ref, page_refs):
     lines = [l for l in f.read_text(encoding='utf-8').splitlines() if l not in page_refs and l != plugin_ref]
     lines.insert(lines.index('@@application/plugin_settings.sql'), plugin_ref)
     end = lines.index('@@application/end_environment.sql')
-    existing = [l for l in lines if l.startswith('@@application/pages/page_')]
+    existing = [l for l in lines if re.match(r'@@application/pages/page_\d{5}\.sql$', l)]
     allp = sorted(set(existing) | set(page_refs))
     lines = [l for l in lines if l not in existing]
     end = lines.index('@@application/end_environment.sql')

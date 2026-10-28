@@ -157,3 +157,74 @@ SELECT l.lineage_id, l.scenario_id, l.source_scenario_id,
   LEFT JOIN org_unit u  ON u.scenario_id = l.scenario_id AND u.unit_code = l.unit_code
   LEFT JOIN org_unit pu ON pu.unit_id = u.parent_unit_id
   LEFT JOIN org_unit su ON su.scenario_id = l.source_scenario_id AND su.unit_code = l.source_unit_code;
+
+-- every unit with the directorate it belongs to (itself, for a directorate) and what
+-- its own positions are: the rows the three-way comparison is built from
+CREATE OR REPLACE VIEW org_v_unit_flat AS
+SELECT u.scenario_id, u.unit_id, u.unit_code, u.unit_type_code, t.name_ar AS unit_type_ar, u.name_ar,
+       d.dir_code, d.depth,
+       (SELECT COUNT(*) FROM org_position p WHERE p.unit_id = u.unit_id)         AS positions,
+       (SELECT COUNT(p.card_id) FROM org_position p WHERE p.unit_id = u.unit_id) AS cards
+  FROM org_unit u
+  JOIN org_unit_type t ON t.unit_type_code = u.unit_type_code
+  LEFT JOIN (SELECT unit_id, CONNECT_BY_ROOT unit_code AS dir_code, LEVEL - 1 AS depth
+               FROM org_unit
+              START WITH unit_type_code = 'DIRECTORATE'
+              CONNECT BY PRIOR unit_id = parent_unit_id AND unit_type_code <> 'DIRECTORATE') d
+         ON d.unit_id = u.unit_id;
+
+-- the three structures side by side: the cards (2003 bylaws), the de facto deck, the
+-- proposal 3.1. Units line up by code: a unit matched across them shares one. Where
+-- a unit is absent, the cell says what became of it, from that scenario's lineage.
+CREATE OR REPLACE VIEW org_v_three_way AS
+WITH s AS (SELECT MAX(CASE scenario_code WHEN 'DG_ASIS_CARDS' THEN scenario_id END) AS a,
+                  MAX(CASE scenario_code WHEN 'DG_DEFACTO'    THEN scenario_id END) AS f,
+                  MAX(CASE scenario_code WHEN 'DG_TOBE_3_1'   THEN scenario_id END) AS t
+             FROM org_scenario),
+     k AS (SELECT DISTINCT u.unit_code FROM org_unit u, s WHERE u.scenario_id IN (s.a, s.f, s.t)),
+     fl AS (SELECT * FROM org_v_unit_flat)
+SELECT k.unit_code,
+       COALESCE(f.unit_type_code, a.unit_type_code, t.unit_type_code)              AS unit_type_code,
+       COALESCE(f.unit_type_ar, a.unit_type_ar, t.unit_type_ar)                    AS unit_type_ar,
+       COALESCE(f.dir_code, a.dir_code, t.dir_code)                                AS dir_code,
+       a.name_ar AS asis_ar, f.name_ar AS defacto_ar, t.name_ar AS tobe_ar,
+       a.cards AS asis_cards, f.positions AS defacto_positions,
+       COALESCE(f.name_ar, (SELECT MAX(CASE l.relation WHEN 'MERGED' THEN 'دُمجت في ' || u.name_ar
+                                                       WHEN 'ABOLISHED' THEN 'غير قائمة فعلاً' END)
+                              FROM org_unit_lineage l
+                              LEFT JOIN org_unit u ON u.scenario_id = l.scenario_id AND u.unit_code = l.unit_code
+                             WHERE l.scenario_id = s.f AND l.source_unit_code = k.unit_code))   AS defacto_fate,
+       COALESCE(t.name_ar, (SELECT MAX(CASE l.relation WHEN 'MERGED' THEN 'تُدمج في ' || u.name_ar
+                                                       WHEN 'ABOLISHED' THEN 'لم توضع' END)
+                              FROM org_unit_lineage l
+                              LEFT JOIN org_unit u ON u.scenario_id = l.scenario_id AND u.unit_code = l.unit_code
+                             WHERE l.scenario_id = s.t AND l.source_unit_code = k.unit_code))   AS tobe_fate,
+       CASE WHEN a.unit_id IS NOT NULL AND f.unit_id IS NOT NULL THEN 'BOTH'
+            WHEN f.unit_id IS NOT NULL AND f.positions = 0       THEN 'DEFACTO_NO_CARD'
+            WHEN f.unit_id IS NOT NULL                           THEN 'DEFACTO_ONLY'
+            WHEN a.unit_id IS NOT NULL                           THEN 'CARDS_ONLY'
+            ELSE 'PROPOSAL_ONLY' END                                               AS status
+  FROM k CROSS JOIN s
+  LEFT JOIN fl a ON a.scenario_id = s.a AND a.unit_code = k.unit_code
+  LEFT JOIN fl f ON f.scenario_id = s.f AND f.unit_code = k.unit_code
+  LEFT JOIN fl t ON t.scenario_id = s.t AND t.unit_code = k.unit_code;
+
+-- the same, one row per directorate, with what lies under it in each structure and
+-- the headcount DG gave for it
+CREATE OR REPLACE VIEW org_v_three_way_dir AS
+SELECT w.unit_code, w.asis_ar, w.defacto_fate, w.tobe_fate,
+       (SELECT CASE WHEN pu.unit_type_code = 'SECTOR' THEN pu.name_ar ELSE 'يتبع المحافظ مباشرة' END
+          FROM org_unit tu JOIN org_unit pu ON pu.unit_id = tu.parent_unit_id
+         WHERE tu.scenario_id = (SELECT scenario_id FROM org_scenario WHERE scenario_code = 'DG_TOBE_3_1')
+           AND tu.unit_code = w.unit_code)                                                       AS tobe_sector,
+       (SELECT SUM(x.asis_cards) FROM org_v_three_way x WHERE x.dir_code = w.unit_code)          AS asis_cards,
+       (SELECT COUNT(*) FROM org_v_three_way x
+         WHERE x.dir_code = w.unit_code AND x.defacto_ar IS NOT NULL AND x.unit_code <> w.unit_code) AS defacto_units,
+       (SELECT COUNT(*) FROM org_v_three_way x
+         WHERE x.dir_code = w.unit_code AND x.status = 'DEFACTO_NO_CARD' AND x.unit_code <> w.unit_code) AS defacto_no_card,
+       (SELECT COUNT(*) FROM org_v_three_way x
+         WHERE x.dir_code = w.unit_code AND x.status = 'CARDS_ONLY')                             AS cards_only_units,
+       (SELECT SUM(h.total) FROM dg_headcount h
+         WHERE h.unit_code = w.unit_code AND h.as_of = (SELECT MAX(as_of) FROM dg_headcount))    AS staff
+  FROM org_v_three_way w
+ WHERE w.unit_type_code = 'DIRECTORATE';

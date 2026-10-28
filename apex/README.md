@@ -107,12 +107,12 @@ Expected: 595 units, 808 positions, 53 lineage rows (5 open), VALIDATE 23 × NO_
 
 **Reloading the batch with the proposal in place stops at the first data file, on
 purpose.** `data/2026-10-27_00_*.sql` will not delete `DG_ASIS_CARDS` while a
-TO-BE was cloned from it. Reloading rebuilds both, and it also discards every
-line confirmed on page 31 in `DG_ASIS_CARDS`, so decide first. Then drop the
-proposal and run `install.sql` again; it rebuilds `DG_TOBE_3_1` at the end:
+proposal or de facto scenario refers to it. Reloading rebuilds both, and it also discards every
+line confirmed on page 31 in `DG_ASIS_CARDS`, so decide first. Then drop both
+and run `install.sql` again; it rebuilds `DG_TOBE_3_1` and `DG_DEFACTO` at the end:
 
     BEGIN
-      FOR o IN (SELECT scenario_id FROM org_scenario WHERE scenario_code = 'DG_TOBE_3_1') LOOP
+      FOR o IN (SELECT scenario_id FROM org_scenario WHERE scenario_code IN ('DG_TOBE_3_1', 'DG_DEFACTO')) LOOP
         UPDATE org_position SET reports_to_pos_id = NULL WHERE scenario_id = o.scenario_id;
         DELETE FROM org_position WHERE scenario_id = o.scenario_id;
         UPDATE org_unit SET parent_unit_id = NULL WHERE scenario_id = o.scenario_id;
@@ -123,6 +123,33 @@ proposal and run `install.sql` again; it rebuilds `DG_TOBE_3_1` at the end:
       COMMIT;
     END;
     /
+
+## 4b. The de facto structure, and all three side by side
+
+`DG_DEFACTO` is DG's deck «هيكليات مديريات محافظة دمشق» (مديرية التنمية الإدارية,
+28/10, in `incoming/2026-10-28/`): the structure as it works today, which the
+screening says the 2004 one does not (ج-2). It is built from the deck, not cloned:
+
+    python3 tools/read_structure_deck.py <deck.pptx> <deck_units.csv>          # boxes and lines -> units
+    python3 tools/draft_unit_match.py <deck_units.csv> analysis/2026-10-28_defacto_map.csv <asis_subunits.json> <draft.csv>
+    # review: analysis/2026-10-28_defacto_map.csv (directorates) and _defacto_units.csv (units, column decision)
+    python3 tools/gen_defacto_sql.py analysis/2026-10-28_defacto_map.csv analysis/2026-10-28_defacto_units.csv \
+        DG_DEFACTO 'الهيكل الفعلي (عرض التنمية الإدارية 28/10)' apex/data/2026-10-28_defacto.sql
+
+A unit matched to one of the cards keeps that unit's code and brings its card
+positions; one that is not keeps no positions, so it shows as «بلا بطاقة». A
+directorate with no chart in the deck brings its units below from the cards.
+Expected: 786 units, 511 positions, 981 lineage rows, VALIDATE 447 × NO_HEAD
+(the units no card describes).
+
+`apex/data/2026-09-30_headcount.sql` loads DG's 30/9 statistics into
+`DG_HEADCOUNT` from `analysis/2026-09-30_headcount.csv` (read through the
+Microsoft 365 connector, not yet the original file): 38 rows, 9,222 staff; the
+summary's 9,925 adds 703 annual contracts (law 53) not yet assigned.
+
+Page 42 «الهياكل الثلاثة» reads `org_v_three_way` / `org_v_three_way_dir`: one
+row per unit or directorate in the cards, de facto, and the proposal 3.1, with
+what became of it where it is absent, and the headcount.
 
 ## 5. Loading the next batch
 
