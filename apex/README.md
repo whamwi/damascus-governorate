@@ -103,7 +103,8 @@ the CSV and regenerate:
     python3 tools/gen_tobe_sql.py analysis/2026-10-28_tobe_3_1_map.csv DG_TOBE_3_1 'الهيكلية المقترحة 3.1' apex/data/2026-10-28_tobe_3_1.sql
 
 The file drops and rebuilds the scenario, so run it after `install.sql`.
-Expected: 595 units, 808 positions, 53 lineage rows (5 open), VALIDATE 23 × NO_HEAD.
+Expected: 593 units, 807 positions, 52 lineage rows (2 open), VALIDATE 23 × NO_HEAD
+(after DG's answers of 1/11, recorded in the CSV notes).
 
 **Reloading the batch with the proposal in place stops at the first data file, on
 purpose.** `data/2026-10-27_00_*.sql` will not delete `DG_ASIS_CARDS` while a
@@ -139,7 +140,7 @@ screening says the 2004 one does not (ج-2). It is built from the deck, not clon
 A unit matched to one of the cards keeps that unit's code and brings its card
 positions; one that is not keeps no positions, so it shows as «بلا بطاقة». A
 directorate with no chart in the deck brings its units below from the cards.
-Expected: 786 units, 511 positions, 981 lineage rows, VALIDATE 447 × NO_HEAD
+Expected: 784 units, 511 positions, 980 lineage rows, VALIDATE 446 × NO_HEAD
 (the units no card describes).
 
 `apex/data/2026-09-30_headcount.sql` loads DG's 30/9 statistics into
