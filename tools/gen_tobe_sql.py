@@ -14,7 +14,9 @@ levels the proposal describes (governor, sector deputies, directorates):
             the current directorate moves under its sector, takes the
             proposed name (and code), and keeps its sub-units and positions
   merged    the first source is kept as above; the others hand it their
-            sub-units and positions, and their heads report to its head
+            sub-units and positions, and their heads report to its head.
+            A source written +CODE (a دائرة, say) moves in whole instead,
+            keeping its level, its head and everything under it
   abolished the current unit and everything under it is left out
 Sub-units and positions that came across from the current structure keep
 their source (CARDS); only what the proposal itself states is PROPOSAL.
@@ -126,6 +128,17 @@ DECLARE
     DELETE FROM org_unit WHERE unit_id = l_from;
   END;
 
+  -- a current unit moved in whole under a placed one: it keeps its level and its head
+  PROCEDURE move_under (p_from VARCHAR2, p_into VARCHAR2) IS
+    l_from NUMBER := uid_of(p_from);
+    l_into NUMBER := uid_of(p_into);
+    l_rep  NUMBER := head_of(p_into);
+  BEGIN
+    UPDATE org_unit SET parent_unit_id = l_into WHERE unit_id = l_from;
+    UPDATE org_position SET reports_to_pos_id = l_rep, link_method_code = 'PROPOSAL'
+     WHERE scenario_id = l_new AND unit_id = l_from AND heads_unit = 'Y';
+  END;
+
   -- a current unit not placed: it and everything under it are left out
   -- (already gone when an abolished unit above it was left out first)
   PROCEDURE leave_out (p_code VARCHAR2) IS
@@ -188,7 +201,10 @@ for i, r in enumerate(placed, 1):
 
 s.append('\n  -- second sources of a merge')
 for c, into in merges:
-    s.append(f"  merge_into({q(c)}, {q(into)});")
+    if c.startswith('+'):
+        s.append(f"  move_under({q(c[1:])}, {q(into)});")
+    else:
+        s.append(f"  merge_into({q(c)}, {q(into)});")
 
 s.append('\n  -- أمين السر stays, in مكتب المحافظ (slide 1); the level he headed does not')
 s.append("  DECLARE\n    l_to NUMBER := uid_of('U-18'); l_rep NUMBER := head_of('U-18'); l_from NUMBER := uid_of('U-16');\n"
@@ -201,7 +217,7 @@ for r in abolished:
 
 s.append('\n  -- lineage: what the comparison page reads')
 for r in rows:
-    srcs = [c for c in r['asis_codes'].split('|') if c] or [None]
+    srcs = [c.lstrip('+') for c in r['asis_codes'].split('|') if c] or [None]
     for c in srcs:
         unit = None if r['relation'] == 'abolished' else target_code(r)
         s.append('  INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, '

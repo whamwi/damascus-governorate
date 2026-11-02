@@ -76,6 +76,17 @@ DECLARE
     DELETE FROM org_unit WHERE unit_id = l_from;
   END;
 
+  -- a current unit moved in whole under a placed one: it keeps its level and its head
+  PROCEDURE move_under (p_from VARCHAR2, p_into VARCHAR2) IS
+    l_from NUMBER := uid_of(p_from);
+    l_into NUMBER := uid_of(p_into);
+    l_rep  NUMBER := head_of(p_into);
+  BEGIN
+    UPDATE org_unit SET parent_unit_id = l_into WHERE unit_id = l_from;
+    UPDATE org_position SET reports_to_pos_id = l_rep, link_method_code = 'PROPOSAL'
+     WHERE scenario_id = l_new AND unit_id = l_from AND heads_unit = 'Y';
+  END;
+
   -- a current unit not placed: it and everything under it are left out
   -- (already gone when an abolished unit above it was left out first)
   PROCEDURE leave_out (p_code VARCHAR2) IS
@@ -163,7 +174,7 @@ BEGIN
   add_unit('T-D-LOCAL', 'T-S-DEV', 'DIRECTORATE', 'مديرية التنمية المحلية', 'مدير مديرية التنمية المحلية', 320);
   place('U-46', 'U-46', 'T-S-DEV', 'مديرية الأنشطة الرياضية', 330);
   place('U-45', 'U-45', 'T-S-DEV', 'دار الكرامة', 340);
-  place('U-23', 'T-D-LIC', 'U-GOV', 'مديرية التراخيص', 350);
+  place('U-23', 'T-D-LIC', 'T-S-MUN', 'مديرية التراخيص', 350);
 
   -- second sources of a merge
   merge_into('U-16.3', 'U-22');
@@ -171,6 +182,7 @@ BEGIN
   merge_into('U-16.4', 'U-26');
   merge_into('U-37', 'U-34');
   merge_into('U-29', 'U-30');
+  move_under('U-20-06', 'T-D-LIC');
 
   -- أمين السر stays, in مكتب المحافظ (slide 1); the level he headed does not
   DECLARE
@@ -230,9 +242,9 @@ BEGIN
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
   VALUES (l_new, 'U-25', l_src, 'U-25', 'RENAMED', 'HIGH', 'N', 'T-S-FIN', 'اسمها اليوم «شؤون الأملاك».');
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
-  VALUES (l_new, 'U-26', l_src, 'U-26', 'MERGED', 'MEDIUM', 'N', 'T-S-FIN', 'تجمع القضايا والشؤون القانونية (26) والشؤون العامة والقانونية في أمانة السر (16.4).');
+  VALUES (l_new, 'U-26', l_src, 'U-26', 'MERGED', 'HIGH', 'N', 'T-S-FIN', 'تجمع القضايا والشؤون القانونية (26) والشؤون العامة والقانونية في أمانة السر (16.4). المحافظة 2/11: مديرية واحدة في الهيكل الجديد.');
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
-  VALUES (l_new, 'U-26', l_src, 'U-16.4', 'MERGED', 'MEDIUM', 'N', 'T-S-FIN', 'تجمع القضايا والشؤون القانونية (26) والشؤون العامة والقانونية في أمانة السر (16.4).');
+  VALUES (l_new, 'U-26', l_src, 'U-16.4', 'MERGED', 'HIGH', 'N', 'T-S-FIN', 'تجمع القضايا والشؤون القانونية (26) والشؤون العامة والقانونية في أمانة السر (16.4). المحافظة 2/11: مديرية واحدة في الهيكل الجديد.');
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
   VALUES (l_new, 'U-39', l_src, 'U-39', 'RENAMED', 'HIGH', 'N', 'T-S-FIN', 'اسمها اليوم «المركبات والرحبات».');
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
@@ -282,11 +294,13 @@ BEGIN
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
   VALUES (l_new, 'U-45', l_src, 'U-45', 'SAME', 'HIGH', 'N', 'T-S-DEV', NULL);
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
-  VALUES (l_new, 'T-D-LIC', l_src, 'U-23', 'MERGED', 'LOW', 'Y', '?', 'المحافظة 1/11: تضم مديرية المهن والرخص الحالية وبعض مهام التراخيص من المديريات الأخرى، لم تُحدَّد بعد. ما زال قطاعها غير محدد، وتتلقى دائرة الرخص الصحية من مديرية الرعاية المقترح حلّها.');
+  VALUES (l_new, 'T-D-LIC', l_src, 'U-23', 'MERGED', 'HIGH', 'N', 'T-S-MUN', 'المحافظة 1/11 و2/11: تتبع القطاع البلدي، وتضم مديرية المهن والرخص الحالية وبعض مهام الترخيص في مديرية التخطيط العمراني. نُقلت إليها دائرة الترخيص والبناء (U-20-06) كاملةً، وهذا تقديرنا لعبارة «بعض المهام». وتتلقى دائرة الرخص الصحية من مديرية الرعاية المقترح حلّها.');
+  INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
+  VALUES (l_new, 'T-D-LIC', l_src, 'U-20-06', 'MERGED', 'HIGH', 'N', 'T-S-MUN', 'المحافظة 1/11 و2/11: تتبع القطاع البلدي، وتضم مديرية المهن والرخص الحالية وبعض مهام الترخيص في مديرية التخطيط العمراني. نُقلت إليها دائرة الترخيص والبناء (U-20-06) كاملةً، وهذا تقديرنا لعبارة «بعض المهام». وتتلقى دائرة الرخص الصحية من مديرية الرعاية المقترح حلّها.');
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
   VALUES (l_new, NULL, l_src, 'U-16', 'ABOLISHED', 'MEDIUM', 'N', NULL, 'يزول مستوى أمانة السر؛ تنتقل مديرياتها إلى المحافظ أو تُدمج. أمين السر نفسه يبقى في مكتب المحافظ بحسب الشريحة 1.');
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
-  VALUES (l_new, NULL, l_src, 'U-16.7', 'ABOLISHED', 'LOW', 'Y', NULL, 'المحافظة 1/11: لم يُبتّ بعد هل تكون مستقلة أم تتبع مديرية ما، علماً أنها كانت تتبع التنمية الإدارية.');
+  VALUES (l_new, NULL, l_src, 'U-16.7', 'ABOLISHED', 'LOW', 'Y', NULL, 'المحافظة 1/11 و2/11: قائمة وتعمل اليوم وفيها موظفون، وتتبع التنمية الإدارية؛ لم يُبتّ بعد في موقعها في الهيكل الجديد.');
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)
   VALUES (l_new, NULL, l_src, 'U-38', 'ABOLISHED', 'HIGH', 'N', NULL, 'المحافظة 1/11: يجري نقل موظفيه إلى وزارة الطوارئ وإدارة الكوارث، فلا مكان له في الهيكل الجديد.');
   INSERT INTO org_unit_lineage (scenario_id, unit_code, source_scenario_id, source_unit_code, relation, confidence, is_open, sector_code, note)

@@ -76,6 +76,9 @@ for d in dirs:
             note + ' لا تذكر الشريحة 5 أيّ المديريات تتبعه، فوُضعت المديريات تحت المحافظ مباشرة.')
         continue
     parent, utype = 'U-GOV', 'DIRECTORATE'
+    if d['grouping'] not in ('', '?'):
+        # a unit the deck does not draw, placed inside a directorate on DG's word (دائرة المراسلات)
+        parent, utype = d['grouping'], 'DEPARTMENT'
     if c in placed_by_deck:
         parent, utype = placed_by_deck[c]['defacto_dir'], 'OFFICE'
         note += ' العرض يرسمه داخل ' + placed_by_deck[c]['dir_name'] + '، فوُضع هناك.'
